@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Database
+*.sqlite3
+
+# Media and static files
+media/
+static/
+
+# Django specific
+migrations/**/__pycache__/
+
+# Environment variables and sensitive data
+.env
+*.log
+*.bak
+local_settings.py
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Testing and coverage reports
+.tox/
+.coverage
+htmlcov/
+
+# Deployment files
+*.tar.gz
+*.zip
