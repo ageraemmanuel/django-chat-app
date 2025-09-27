@@ -1,0 +1,25 @@
+{% extends 'main.html' %} {% block content %}
+
+<h1>Home Connect</h1>
+<div>
+  <p>{{data.chat}}</p>
+  {% for d in data %}
+  <div>
+    <p>{{d.id}}</p>
+    <a href="{% url 'chatroom' d.id %}">
+      <p>{{d.sender.username}}</p>
+    </a>
+    <h4>Content: {{d.content}}</h4>
+  </div>
+  {% endfor %}
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="username" value="{{req.user.username}}" />
+    <input type="hidden" name="chatroom" value="{{req.user.username}}" />
+    <br /><br />
+    <textarea name="message" id=""> </textarea>
+    <br />
+    <input type="submit" value="submit" />
+  </form>
+</div>
+{% endblock %}
