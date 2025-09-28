@@ -1,7 +1,7 @@
 from django.forms import ModelForm
-from .models import Message
+from .models import User
 
-class MessageForm(ModelForm):
+class UserCreationForm(ModelForm):
   class Meta:
-    model=Message
-    fields='__all__'
+    model=User
+    fields=['name', 'dob', 'phone_number', 'email', 'bio' ]

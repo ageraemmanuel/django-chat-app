@@ -1,44 +1,50 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+class User(AbstractUser):
+  name = models.CharField(max_length=200)
+  dob = models.DateField(blank=True, null=True)
+  avater = models.ImageField(default='')
+  phone_number = models.CharField(max_length=20, blank=True)
+  email = models.EmailField(unique=True)
+  bio = models.TextField(max_length=500, blank=True, null=True)
+  is_active = models.BooleanField(default=True)
+  is_staff = models.BooleanField(default=False)
+
+
+  USERNAME_FIELD = 'email'
+  REQUIRED_FIELDS = ['name', 'phone_number']
+
+class FriendRequest(models.Model):
+  sender = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
+  receiver = models.ForeignKey(User, related_name='recieved_requests', on_delete=models.CASCADE)
+  is_accepted = models.BooleanField(default=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+
+  class Meta:
+    unique_together = ('sender', 'receiver') 
+
+  def __str__(self):
+    return f"You received a friend request from {self.sender}"
+
+class Friends (models.Model):
+  user = models.ForeignKey(User, related_name='friends', on_delete=models.CASCADE)
+  friend = models.ForeignKey(User, related_name='friends_with', on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now=True)
+  
+  class Meta:
+    unique_together = ('user', 'friend')
+
+  def __str__(self):
+    return f"{self.friend}"
 
 class Chat(models.Model):
-  """
-  chat can either be private or a group chat
-  """
-  # name of the chat (group name) or( user1+user2 or null for private chat)
-  name  = models.CharField(max_length=100, blank=True, null=True)
-  chat_type = models.CharField(max_length=20) #private or group
-  participants = models.ManyToManyField(User, related_name='chats', through='ChatParticipant')
-
-  def __str__(self):
-    return self.name or f"Chat {self.id}"
-
-class ChatParticipant(models.Model):
-  """
-  This model will connect users to the chat model
-  """
-  user = models.ForeignKey(User, on_delete=models.CASCADE)
-  chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-  joined_at = models.DateTimeField(auto_now_add=True)
-
-  class Meta:
-    unique_together = ('user', 'chat') #Ensures the user join chat only once
-
-class Message(models.Model):
-  """
-  This represent the message sent within a chat
-  """
-
-  #links athe message to a specific conversion
-  chat = models.ForeignKey(Chat, related_name='messages', on_delete=models.CASCADE)
-  sender = models.ForeignKey(User, related_name='sent_message', on_delete=models.CASCADE)
+  sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
+  receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
   content = models.TextField()
-  timestamp = models.DateTimeField(auto_now_add=True)
-
-  class Meta:
-    ordering = ['timestamp'] #how to arrange the data when querry 
-
+  created_at = models.DateTimeField(auto_now_add=True)
+  is_read = models.BooleanField(default=False)
+  
   def __str__(self):
-    return f"message from {self.sender.username} in {self.chat}"
+    return f"message from {self.sender} to {self.receiver}: {self.content[0:20]}"

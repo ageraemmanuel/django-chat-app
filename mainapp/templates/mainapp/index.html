@@ -2,14 +2,14 @@
 
 <h1>Home Connect</h1>
 <div>
-  <p>{{data.chat}}</p>
-  {% for d in data %}
+  <h3>Messages</h3>
+  {% for m in messages %}
   <div>
-    <p>{{d.id}}</p>
-    <a href="{% url 'chatroom' d.id %}">
-      <p>{{d.sender.username}}</p>
+    <p>{{m.id}}</p>
+    <a href="{% url 'chatroom' m.id %}">
+      <p>{{m.sender.username}}</p>
     </a>
-    <h4>Content: {{d.content}}</h4>
+    <h4>{{m.content}}</h4>
   </div>
   {% endfor %}
   <form action="" method="POST">

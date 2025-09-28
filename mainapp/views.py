@@ -1,40 +1,42 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Message, Chat
-from .forms import MessageForm
+from .models import Chat
+from .forms import UserCreationForm
 
 
 def home(req):
-  messages = Message.objects.all()
-  print(messages)
-  form = MessageForm()
-  print(form)
-  if req.method=='POST':
-    message=req.POST.get('message')
-    username=req.POST.get('username')
-    Message.objects.create(
-      chat=messages.chat.name,
-      sender=username,
+  messages = messages = Message.objects.filter(sender=req.user)
+
+  context = {'messages': messages}
+
+  if req.method == 'POST':
+    chat, create = Chat.objects.get()
+    message = req.POST.get('message')
+    user = req.user.username
+    res = Messages.object.create(
+      sender=user,
+      chat=chat,
       content=message
-    )
+    )     
+    print(res)
 
-  data = {'data': messages, 'form': form}
-  return render(req, 'mainapp/index.html', data )
-#
+  return render(req, 'mainapp/index.html', context)
+
+  # Register views
+def register(req):
+  form = UserCreationForm()
+  context = {'form': form}
+
+  if req.method == 'POST':
+    form = UserCreationForm(req.POST)
+
+    if form.is_valid:
+      req.authenticate()
+      form.save()
+  
+  return render(req, 'mainapp/register.html', context)
+
 def chatroom(req, pk):
-  message=Message.objects.all()
-  return render(req, "mainapp/chatroom.html", {'customer': message})
-
-# def sendchat(request):
-#   message = None
-#   name = None
-#   if request.method == "POST":
-#     form = MessageForm(request.POST)
-#     print(form)
-#     if form.is_valid():
-#       form.save()
-#     else:
-#       print('invalid form')
-#     return redirect('home')
-#   else:
-#     return redirect('chatroom')
+  message = Message.objects.get(id=pk)
+  context = {'message': message}
+  return render(req, 'mainapp/chatroom.html', context)

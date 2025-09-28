@@ -1,4 +1,6 @@
 {% extends 'main.html' %} {% block content %}
-<h1>{{customer.name}}</h1>
+<h1>{{message.sender}}</h1>
+<p>{{message.content}}</p>
+<small>{{message.timestamp|timesince}} ago</small>
 
 {% endblock %}
