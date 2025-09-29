@@ -1,15 +1,14 @@
 {% extends 'main.html' %} {% block content %}
 
-<h1>Home Connect</h1>
+<h1>Hello {{user.username}}</h1>
 <div>
-  <h3>Messages</h3>
-  {% for m in messages %}
+  <h3>People you may know</h3>
+  {% for user in users %}
   <div>
-    <p>{{m.id}}</p>
-    <a href="{% url 'chatroom' m.id %}">
-      <p>{{m.sender.username}}</p>
+    <a href="{% url 'chatroom' user.id %}">
+      <p>{{user.username}}</p>
     </a>
-    <h4>{{m.content}}</h4>
+    <p>{{user.email}}</p>
   </div>
   {% endfor %}
   <form action="" method="POST">

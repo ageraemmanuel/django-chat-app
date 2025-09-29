@@ -1,39 +1,28 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import login
 from django.http import HttpResponse
-from .models import Chat
+from .models import Chat, User
 from .forms import UserCreationForm
 
 
 def home(req):
-  messages = messages = Message.objects.filter(sender=req.user)
-
-  context = {'messages': messages}
-
-  if req.method == 'POST':
-    chat, create = Chat.objects.get()
-    message = req.POST.get('message')
-    user = req.user.username
-    res = Messages.object.create(
-      sender=user,
-      chat=chat,
-      content=message
-    )     
-    print(res)
-
+  chat = Chat.objects.all()
+  users = User.objects.all()
+  context = {'users': users, 'user': req.user}
   return render(req, 'mainapp/index.html', context)
 
   # Register views
 def register(req):
-  form = UserCreationForm()
-  context = {'form': form}
-
   if req.method == 'POST':
     form = UserCreationForm(req.POST)
-
-    if form.is_valid:
-      req.authenticate()
-      form.save()
-  
+    if form.is_valid():
+      user = form.save()
+      login(req, user)
+      return redirect('home')
+  else:
+    form = UserCreationForm()
+    
+  context = {'form': form}
   return render(req, 'mainapp/register.html', context)
 
 def chatroom(req, pk):
