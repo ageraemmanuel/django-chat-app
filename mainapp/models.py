@@ -4,11 +4,12 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
   email = models.EmailField(unique=True)  # Make email unique
   dob = models.DateField(blank=True, null=True)
-  avater = models.ImageField(upload_to='images/', default='', blank=True, null=True)
+  avatar = models.ImageField(upload_to='images/', blank=True, null=True)
   phone_number = models.CharField(max_length=20, blank=True)
   bio = models.TextField(max_length=500, blank=True, null=True)
   is_active = models.BooleanField(default=True)
   is_staff = models.BooleanField(default=False)
+  created_at = models.DateTimeField(auto_now=True)
 
   USERNAME_FIELD = 'email' 
   REQUIRED_FIELDS = ['username', 'phone_number'] 
@@ -26,13 +27,13 @@ class FriendRequest(models.Model):
     unique_together = ('sender', 'receiver') 
 
   def __str__(self):
-    return f"You received a friend request from {self.sender}"
+    return f"You have a friend request from {self.sender}"
 
 class Friend(models.Model):
   user = models.ForeignKey(User, related_name='friends', on_delete=models.CASCADE)
   friend = models.ForeignKey(User, related_name='friends_with', on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now=True)
-  
+
   class Meta:
     unique_together = ('user', 'friend')
 
@@ -55,6 +56,7 @@ class Post(models.Model):
   descriptions = models.TextField(blank=True, null=True)
   imageurl = models.ImageField(upload_to='images/' ,blank=True, null=True)
   video = models.FileField(upload_to='videos/')
+  views = models.IntegerField(blank=True, null=True, default=0)
 
   def __str__(self):
     return self.title

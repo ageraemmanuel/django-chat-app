@@ -1,24 +1,50 @@
-{% extends 'main.html' %} {% block content %}
-
+{% extends 'main.html' %} {% block content %} {% load static %}
 <h1>Hello {{user.username}}</h1>
-<div>
-  <h3>People you may know</h3>
-  {% for user in users %}
-  <div>
-    <a href="{% url 'chatroom' user.id %}">
-      <p>{{user.username}}</p>
-    </a>
-    <p>{{user.email}}</p>
+<div class="wrapper-grid-1-3-1">
+  <div class="p-2">
+    <h3>People you may know</h3>
+    {% for user in users %}
+    <div class="shadow flex">
+      {% if user.avatar %}
+      <img
+        class="profile-image"
+        src="{{ user.avatar.url }}"
+        alt="{{ user.username }} profile pic"
+      />
+      {% else %}
+      <img
+        class="profile-image"
+        src="{% static 'images/default-pic.jpg' %}"
+        alt="default profile pic"
+      />
+      {% endif %}
+      <div>
+        <a href="{% url 'user_profile' user.id %}">
+          <p>{{user.username}}</p>
+        </a>
+        <p>{{user.friends.count}} followers</p>
+      </div>
+      <a href="{% url 'follow' user.id %}">Follow</a>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
-  <form action="" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="username" value="{{req.user.username}}" />
-    <input type="hidden" name="chatroom" value="{{req.user.username}}" />
-    <br /><br />
-    <textarea name="message" id=""> </textarea>
-    <br />
-    <input type="submit" value="submit" />
-  </form>
+  <div class="p-2">
+    <h3>Recent posts</h3>
+    {% if posts and posts.count != 0 %}
+    <div>
+      {% for p in posts %}
+      <h3>{{p.title}}</h3>
+      <video src="{{p.video.url}}"></video>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div>
+      <h3>No Recent posts to display</h3>
+    </div>
+    {% endif %}
+  </div>
+  <div>
+    <h3>Recent Activities</h3>
+  </div>
 </div>
 {% endblock %}

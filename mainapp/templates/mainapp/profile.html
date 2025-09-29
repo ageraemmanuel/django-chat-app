@@ -1,0 +1,41 @@
+{% extends 'main.html' %} {% load static %} {% block content %}
+<div>
+  {% if user.avatar %}
+  <img
+    class="profile-image"
+    src="{{ user.avatar.url }}"
+    alt="{{ user.username }} profile pic"
+  />
+  {% else %}
+  <img
+    class="profile-image"
+    src="{% static 'images/default-pic.jpg' %}"
+    alt="default profile pic"
+  />
+  {% endif %}
+  <h1>{{user.username}}</h1>
+  <p>{{user.created_at|timesince}}</p>
+  <h3>Pending Requests</h3>
+  {% if not friend_requests %}
+  <p>No pending Requests</p>
+  {% else %}
+  <div>
+    {% for f in friend_requests %}
+    <p>{{f.sender.username}}</p>
+    {% if f.is_accepted %}
+    <p>Frinds since {{f.created_at}}</p>
+    {% else %}
+    <a href="{% url 'approve_request' f.sender.id %}">Accept</a>
+    {% endif %} {% endfor %}
+  </div>
+  {% endif %}
+
+  <div>
+    <h3>Your Friends</h3>
+    {% for f in friends %}
+    <p>{{f.friend.username}}</p>
+    <a href="">send message</a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
