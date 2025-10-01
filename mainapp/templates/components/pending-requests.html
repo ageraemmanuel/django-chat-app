@@ -1,0 +1,35 @@
+{% load static %}
+<aside>
+  {% if request.user.is_authenticated%}
+  <h3>Pending Requests</h3>
+  {% for r in pending_req %}
+  <div class="shadow flex">
+    {% if r.sender.avatar %}
+    <img
+      class="profile-image"
+      src="{{ r.sender.avatar.url }}"
+      alt="{{r.sender.username }} profile pic"
+    />
+    {% else %}
+    <img
+      class="profile-image"
+      src="{% static 'images/default-pic.jpeg' %}"
+      alt="default profile pic"
+    />
+    {% endif %}
+    <div>
+      <a href="{% url 'user_profile' r.sender.id %}">
+        <p>{{r.sender.username}}</p>
+      </a>
+      <p>{{r.sender.friends.count}} followers</p>
+      <a href="{% url 'approve_request' r.sender.id %}">Accept</a>
+    </div>
+  </div>
+  {% endfor %}
+  <div>
+    {% else %}
+    <h3>Recent Activities</h3>
+    <p>No Recent Activities to show</p>
+    {% endif %}
+  </div>
+</aside>
